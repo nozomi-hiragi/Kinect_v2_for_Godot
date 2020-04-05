@@ -67,9 +67,9 @@ void ColorSource::_process(float delta) {
     update();
 }
 
-void ColorSource::update() {
+bool ColorSource::update() {
     if (_reader == nullptr) {
-        return;
+        return false;
     }
 
     IColorFrame* frame = nullptr;
@@ -79,7 +79,7 @@ void ColorSource::update() {
             frame->Release();
             frame = nullptr;
         }
-        return;
+        return false;
     }
 
     frame->CopyConvertedFrameDataToArray(_data.size(), _data.write().ptr(), ColorImageFormat_Rgba);
@@ -93,4 +93,6 @@ void ColorSource::update() {
         frame->Release();
         frame = nullptr;
     }
+
+    return true;
 }

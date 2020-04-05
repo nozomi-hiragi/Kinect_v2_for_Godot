@@ -1,9 +1,7 @@
 #ifndef _COLOR_SOURCE_H_
 #define _COLOR_SOURCE_H_
 
-#include <vector>
 #include <Godot.hpp>
-#include <Sprite.hpp>
 #include <ImageTexture.hpp>
 #include <Kinect.h>
 
@@ -30,7 +28,7 @@ public:
     void _init(); // our initializer called by Godot
     void _process(float delta);
 
-    void update();
+    bool update();
     int get_color_width() { return _color_width; }
     int get_color_height() { return _color_height; }
     Ref<Image> get_image() { return _image; }

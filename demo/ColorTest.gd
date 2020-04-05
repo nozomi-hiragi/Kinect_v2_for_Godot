@@ -1,23 +1,20 @@
-extends Node
-
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
-
-onready var sprite = $Sprite
+extends Sprite
 
 var color_source
 var image_texture = ImageTexture.new()
+var image = Image.new()
 
-# Called when the node enters the scene tree for the first time.
 func _ready():
+	Engine.target_fps = 30
 	color_source = load("res://bin/ColorSource.gdns").new()
-	sprite.texture = image_texture
+	texture = image_texture
 
 func _process(delta):
-	color_source.update()
-	
+	if !color_source.update():
+		return
+
 	var color_image = color_source.get_image()
 	if color_image == null:
 		return
+
 	image_texture.create_from_image(color_image)

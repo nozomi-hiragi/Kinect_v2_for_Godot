@@ -25,6 +25,8 @@ bits = 64
 # only support windows
 platform = 'windows'
 
+kinectpath = os.environ['KINECTSDK20_DIR']
+
 # Updates the environment with the option variables.
 opts.Update(env)
 
@@ -71,11 +73,15 @@ env.Append(CPPPATH=[
     godot_headers_path,
     cpp_bindings_path + 'include/',
     cpp_bindings_path + 'include/core/',
-    cpp_bindings_path + 'include/gen/'])
-
+    cpp_bindings_path + 'include/gen/',
+    kinectpath + 'inc/'])
+print('k: %s' % kinectpath + 'inc/')
 # make sure our binding library is properly includes
 env.Append(LIBPATH=[cpp_bindings_path + 'bin/'])
 env.Append(LIBS=[cpp_library])
+
+env.Append(LIBPATH=[kinectpath + 'lib/x64'])
+env.Append(LINKFLAGS=['Kinect20.lib'])
 
 # tweak this if you want to use different folders, or more folders, to store your source code in.
 env.Append(CPPPATH=['src/'])

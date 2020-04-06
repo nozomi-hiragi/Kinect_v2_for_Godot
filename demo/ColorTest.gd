@@ -5,7 +5,6 @@ var image_texture = ImageTexture.new()
 var image = Image.new()
 
 func _ready():
-	Engine.target_fps = 30
 	color_source = load("res://bin/ColorSource.gdns").new()
 	texture = image_texture
 

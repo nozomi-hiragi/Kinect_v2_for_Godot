@@ -83,8 +83,9 @@ bool DepthSource::update() {
 
     frame->CopyFrameDataToArray(_buffer.size(), _buffer.data());
 
+    auto data_ptr = _data.write().ptr();
     for (int i = 0; i < _buffer.size(); i++) {
-        _data.set(i, _buffer[i]);
+        data_ptr[i] = _buffer[i];
     }
 
     if (frame != nullptr) {

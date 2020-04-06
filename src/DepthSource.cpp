@@ -6,8 +6,8 @@ using namespace godot;
 void DepthSource::_register_methods() {
     register_method("_process", &DepthSource::_process);
     register_method("update", &DepthSource::update);
-    register_method("get_depth_width", &DepthSource::get_depth_width);
-    register_method("get_depth_height", &DepthSource::get_depth_height);
+    register_method("get_buffer_width", &DepthSource::get_buffer_width);
+    register_method("get_buffer_height", &DepthSource::get_buffer_height);
     register_method("get_data", &DepthSource::get_data);
 } 
 
@@ -49,8 +49,8 @@ void DepthSource::_init() {
 
     IFrameDescription* frame_desc;
     ret = depth_frame_source->get_FrameDescription(&frame_desc);
-    ret = frame_desc->get_Width(&_depth_width);
-    ret = frame_desc->get_Height(&_depth_height);
+    ret = frame_desc->get_Width(&_buffer_width);
+    ret = frame_desc->get_Height(&_buffer_height);
 
     unsigned int lip = 0;
     ret = frame_desc->get_LengthInPixels(&lip);

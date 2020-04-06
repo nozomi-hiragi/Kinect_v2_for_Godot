@@ -17,8 +17,8 @@ private:
     std::vector<UINT16> _buffer;
     PoolIntArray _data;
 
-    int _depth_width;
-    int _depth_height;
+    int _buffer_width;
+    int _buffer_height;
 
 public:
     static void _register_methods();
@@ -30,8 +30,8 @@ public:
     void _process(float delta);
 
     bool update();
-    int get_depth_width() { return _depth_width; }
-    int get_depth_height() { return _depth_height; }
+    int get_buffer_width() { return _buffer_width; }
+    int get_buffer_height() { return _buffer_height; }
     PoolIntArray get_data() { return _data; }
 };
 

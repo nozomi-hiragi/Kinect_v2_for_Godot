@@ -16,8 +16,8 @@ private:
     PoolByteArray _data;
     Ref<Image> _image;
 
-    int _color_width;
-    int _color_height;
+    int _buffer_width;
+    int _buffer_height;
 
 public:
     static void _register_methods();
@@ -29,8 +29,8 @@ public:
     void _process(float delta);
 
     bool update();
-    int get_color_width() { return _color_width; }
-    int get_color_height() { return _color_height; }
+    int get_buffer_width() { return _buffer_width; }
+    int get_buffer_height() { return _buffer_height; }
     Ref<Image> get_image() { return _image; }
     PoolByteArray get_data() { return _data; }
 };

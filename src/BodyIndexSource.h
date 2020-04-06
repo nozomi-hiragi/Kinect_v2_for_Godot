@@ -15,8 +15,8 @@ private:
     IBodyIndexFrameReader* _reader;
     PoolByteArray _data;
 
-    int _body_index_width;
-    int _body_index_height;
+    int _buffer_width;
+    int _buffer_height;
 
 public:
     static void _register_methods();
@@ -28,8 +28,8 @@ public:
     void _process(float delta);
 
     bool update();
-    int get_body_index_width() { return _body_index_width; }
-    int get_body_index_height() { return _body_index_height; }
+    int get_buffer_width() { return _buffer_width; }
+    int get_buffer_height() { return _buffer_height; }
     PoolByteArray get_data() { return _data; }
 };
 

@@ -15,8 +15,8 @@ func _process(delta):
 	var body_index_data = body_index_source.get_data()
 	if body_index_data == null:
 		return
-	var w = body_index_source.get_body_index_width()
-	var h = body_index_source.get_body_index_height()
+	var w = body_index_source.get_buffer_width()
+	var h = body_index_source.get_buffer_height()
 
 	image.create_from_data(w, h, false, Image.FORMAT_L8, PoolByteArray(Array(body_index_data)))
 	image_texture.create_from_image(image)

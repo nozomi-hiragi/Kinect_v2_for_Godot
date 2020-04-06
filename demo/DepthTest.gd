@@ -15,8 +15,8 @@ func _process(delta):
 	var depth_data = depth_source.get_data()
 	if depth_data == null:
 		return
-	var w = depth_source.get_depth_width()
-	var h = depth_source.get_depth_height()
+	var w = depth_source.get_buffer_width()
+	var h = depth_source.get_buffer_height()
 
 	image.create_from_data(w, h, false, Image.FORMAT_L8, PoolByteArray(Array(depth_data)))
 	image_texture.create_from_image(image)

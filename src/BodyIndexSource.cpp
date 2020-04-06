@@ -5,8 +5,8 @@ using namespace godot;
 void BodyIndexSource::_register_methods() {
     register_method("_process", &BodyIndexSource::_process);
     register_method("update", &BodyIndexSource::update);
-    register_method("get_body_index_width", &BodyIndexSource::get_body_index_width);
-    register_method("get_body_index_height", &BodyIndexSource::get_body_index_height);
+    register_method("get_buffer_width", &BodyIndexSource::get_buffer_width);
+    register_method("get_buffer_height", &BodyIndexSource::get_buffer_height);
     register_method("get_data", &BodyIndexSource::get_data);
 } 
 
@@ -48,8 +48,8 @@ void BodyIndexSource::_init() {
 
     IFrameDescription* frame_desc;
     ret = body_index_frame_source->get_FrameDescription(&frame_desc);
-    ret = frame_desc->get_Width(&_body_index_width);
-    ret = frame_desc->get_Height(&_body_index_height);
+    ret = frame_desc->get_Width(&_buffer_width);
+    ret = frame_desc->get_Height(&_buffer_height);
 
     unsigned int bpp = 0;
     ret = frame_desc->get_BytesPerPixel(&bpp);

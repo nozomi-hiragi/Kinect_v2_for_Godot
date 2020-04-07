@@ -1,0 +1,16 @@
+[general]
+
+singleton=false
+load_once=true
+symbol_prefix="kinect_"
+reloadable=true
+
+[entry]
+
+Windows.64="res://bin/win64/libkinect.dll"
+
+[dependencies]
+
+X11.64=[  ]
+Windows.64=[  ]
+OSX.64=[  ]

@@ -18,7 +18,6 @@ onready var center_line = $BodyTest/CenterLine
 onready var arm_line = $BodyTest/ArmLine
 onready var leg_line = $BodyTest/LegLine
 
-
 var timer = 0.0
 
 func _ready():
@@ -37,6 +36,7 @@ func _ready():
 	
 	points.resize(9)
 	leg_line.points = points
+	
 
 func _process(delta):
 	timer += delta
@@ -81,3 +81,4 @@ func _process(delta):
 		leg_line.set_point_position(6, kinect.get_joint_depth_position(i, 17))
 		leg_line.set_point_position(7, kinect.get_joint_depth_position(i, 18))
 		leg_line.set_point_position(8, kinect.get_joint_depth_position(i, 19))
+	

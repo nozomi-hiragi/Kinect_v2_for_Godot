@@ -4,6 +4,8 @@
 #include <Godot.hpp>
 #include <ImageTexture.hpp>
 #include <Kinect.h>
+#include "KinectSensorWrap.h"
+#include "BodyIndexFrameSourceWrap.h"
 
 namespace godot {
 
@@ -11,10 +13,11 @@ class BodyIndexSource : public Reference {
     GODOT_CLASS(BodyIndexSource, Reference)
 
 private:
-    IKinectSensor* _sensor;
-    IBodyIndexFrameReader* _reader;
     PoolByteArray _data;
     Ref<Image> _image;
+
+    KinectSensorWrap _kinect_sensor;
+    std::unique_ptr<BodyIndexFrameSourceWrap> _body_index_frame_source;
 
 public:
     static void _register_methods();

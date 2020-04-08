@@ -2,7 +2,6 @@ extends Sprite
 
 var depth_source
 var image_texture = ImageTexture.new()
-var image = Image.new()
 
 onready var depth_space_test = $"../DepthSpaceTest"
 var depth_space_image_texture = ImageTexture.new()

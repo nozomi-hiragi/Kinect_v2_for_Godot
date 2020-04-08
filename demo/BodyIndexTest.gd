@@ -2,7 +2,6 @@ extends Sprite
 
 var body_index_source
 var image_texture = ImageTexture.new()
-var image = Image.new()
 
 func _ready():
 	body_index_source = load("res://bin/BodyIndexSource.gdns").new()

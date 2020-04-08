@@ -20,46 +20,15 @@ BodySource::BodySource() {
 }
 
 BodySource::~BodySource() {
-    if (_mapper) {
-        _mapper->Release();
-        _mapper = nullptr;
-    }
-
-    if (_reader) {
-        _reader->Release();
-        _reader = nullptr;
-    }
-
-    if (_sensor) {
-        BOOLEAN is_open = false;
-        _sensor->get_IsOpen(&is_open);
-        if (is_open) {
-            _sensor->Close();
-        }
-        _sensor->Release();
-        _sensor = nullptr;
-    }
+    _coordinator_mapper->release();
+    _body_frame_source->release();
+    _kinect_sensor.release();
 }
 
 void BodySource::_init() {
-    auto ret = GetDefaultKinectSensor(&_sensor);
-    if (ret != S_OK) {
-        return;
-    }
-
-    BOOLEAN is_open = false;
-    _sensor->get_IsOpen(&is_open);
-    if (!is_open) {
-        auto ret = _sensor->Open();
-    }
-
-    IBodyFrameSource* body_frame_source = nullptr;
-    ret = _sensor->get_BodyFrameSource(&body_frame_source);
-    ret = body_frame_source->OpenReader(&_reader);
-
-    _sensor->get_CoordinateMapper(&_mapper);
-
-    body_frame_source->Release();
+    _kinect_sensor.init();
+    _body_frame_source = _kinect_sensor.create<BodyFrameSourceWrap>();
+    _coordinator_mapper = _kinect_sensor.create<CoordinatorMapperWrap>();
 }
 
 void BodySource::_process(float delta) {
@@ -67,33 +36,20 @@ void BodySource::_process(float delta) {
 }
 
 bool BodySource::update() {
-    if (_reader == nullptr) {
-        return false;
-    }
-
-    IBodyFrame* frame = nullptr;
-    auto ret = _reader->AcquireLatestFrame(&frame);
-    if (FAILED(ret)) {
-        if (frame != nullptr) {
-            frame->Release();
-            frame = nullptr;
+    auto ret = _body_frame_source->update([&](IBodyFrame* frame) {
+        for (auto& body : _bodies) {
+            if (body == nullptr) {
+                continue;
+            }
+            body->Release();
+            body = nullptr;
         }
+
+        frame->GetAndRefreshBodyData(BODY_COUNT, _bodies);
+    });
+
+    if (!ret) {
         return false;
-    }
-
-    for (auto& body : _bodies) {
-        if (body == nullptr) {
-            continue;
-        }
-        body->Release();
-        body = nullptr;
-    }
-
-    frame->GetAndRefreshBodyData(BODY_COUNT, _bodies);
-
-    if (frame != nullptr) {
-        frame->Release();
-        frame = nullptr;
     }
 
     concurrency::parallel_for(0, BODY_COUNT, [&](int i) {

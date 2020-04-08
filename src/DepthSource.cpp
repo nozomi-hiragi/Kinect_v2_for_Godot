@@ -18,63 +18,27 @@ DepthSource::DepthSource() {
 }
 
 DepthSource::~DepthSource() {
-    if (_mapper) {
-        _mapper->Release();
-        _mapper = nullptr;
-    }
-
-    if (_reader) {
-        _reader->Release();
-        _reader = nullptr;
-    }
-
-    if (_sensor) {
-        BOOLEAN is_open = false;
-        _sensor->get_IsOpen(&is_open);
-        if (is_open) {
-            _sensor->Close();
-        }
-        _sensor->Release();
-        _sensor = nullptr;
-    }
+    _coordinator_mapper->release();
+    _depth_frame_source->release();
+    _kinect_sensor.release();
 }
 
 void DepthSource::_init() {
-    auto ret = GetDefaultKinectSensor(&_sensor);
-    if (ret != S_OK) {
-        return;
-    }
+    _kinect_sensor.init();
 
-    BOOLEAN is_open = false;
-    _sensor->get_IsOpen(&is_open);
-    if (!is_open) {
-        auto ret = _sensor->Open();
-    }
+    _depth_frame_source = _kinect_sensor.create<DepthFrameSourceWrap>();
+    _coordinator_mapper = _kinect_sensor.create<CoordinatorMapperWrap>();
 
-    IDepthFrameSource* depth_frame_source = nullptr;
-    ret = _sensor->get_DepthFrameSource(&depth_frame_source);
-    ret = depth_frame_source->OpenReader(&_reader);
-
-    IFrameDescription* frame_desc;
-    ret = depth_frame_source->get_FrameDescription(&frame_desc);
-
-    unsigned int lip = 0;
-    ret = frame_desc->get_LengthInPixels(&lip);
-
-    _buffer.resize(lip);
-    _data.resize(lip);
-    _normalize_data.resize(lip);
-
+    auto desc = _depth_frame_source->getFrameDescription();
+    _buffer.resize(desc._length_in_pixels);
+    _data.resize(desc._length_in_pixels);
+    _normalize_data.resize(desc._length_in_pixels);
     _color_space_points.resize(1920*1080*2);
-
-    _sensor->get_CoordinateMapper(&_mapper);
-
-    frame_desc->Release();
-    depth_frame_source->Release();
 
     if (_image.is_null()) {
         _image.instance();
     }
+    _image->create_from_data(get_buffer_width(), get_buffer_height(), false, Image::FORMAT_L8, _normalize_data);
 
     if (_color_space_index_image.is_null()) {
         _color_space_index_image.instance();
@@ -87,28 +51,20 @@ void DepthSource::_process(float delta) {
 }
 
 bool DepthSource::update() {
-    if (_reader == nullptr) {
+
+    auto ret = _depth_frame_source->update([&](IDepthFrame* frame) {
+       frame->CopyFrameDataToArray(_buffer.size(), _buffer.data());
+    });
+
+    if (!ret) {
         return false;
     }
-
-    IDepthFrame* frame = nullptr;
-    auto ret = _reader->AcquireLatestFrame(&frame);
-    if (FAILED(ret)) {
-        if (frame != nullptr) {
-            frame->Release();
-            frame = nullptr;
-        }
-        return false;
-    }
-
-    frame->CopyFrameDataToArray(_buffer.size(), _buffer.data());
-
 
     // Heavy
     if (_ticktack) {
         int color_dot_count = 1920*1080;
         std::vector<DepthSpacePoint> depth_space_points(color_dot_count);
-        _mapper->MapColorFrameToDepthSpace(
+        _coordinator_mapper->kari()->MapColorFrameToDepthSpace(
             _buffer.size(),
             _buffer.data(),
             color_dot_count,
@@ -136,11 +92,6 @@ bool DepthSource::update() {
     });
 
     _image->create_from_data(get_buffer_width(), get_buffer_height(), false, Image::FORMAT_L8, _normalize_data);
-
-    if (frame != nullptr) {
-        frame->Release();
-        frame = nullptr;
-    }
 
     return true;
 }

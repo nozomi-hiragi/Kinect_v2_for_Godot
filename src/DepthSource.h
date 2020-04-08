@@ -5,6 +5,8 @@
 #include <Godot.hpp>
 #include <ImageTexture.hpp>
 #include <Kinect.h>
+#include "KinectSensorWrap.h"
+#include "CoordinateMapperWrap.h"
 
 namespace godot {
 
@@ -12,16 +14,17 @@ class DepthSource : public Reference {
     GODOT_CLASS(DepthSource, Reference)
 
 private:
-    IKinectSensor* _sensor;
-    IDepthFrameReader* _reader;
     std::vector<UINT16> _buffer;
     PoolIntArray _data;
     PoolByteArray _normalize_data;
     Ref<Image> _image;
 
-    ICoordinateMapper* _mapper;
     PoolByteArray _color_space_points;
     Ref<Image> _color_space_index_image;
+
+    KinectSensorWrap _kinect_sensor;
+    std::unique_ptr<DepthFrameSourceWrap> _depth_frame_source;
+    std::unique_ptr<CoordinatorMapperWrap> _coordinator_mapper;
 
     bool _ticktack;
 

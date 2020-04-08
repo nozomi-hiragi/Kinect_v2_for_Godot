@@ -4,6 +4,8 @@
 #include <Godot.hpp>
 #include <ImageTexture.hpp>
 #include <Kinect.h>
+#include "KinectSensorWrap.h"
+#include "ColorFrameSourceWrap.h"
 
 namespace godot {
 
@@ -11,10 +13,11 @@ class ColorSource : public Reference {
     GODOT_CLASS(ColorSource, Reference)
 
 private:
-    IKinectSensor* _sensor;
-    IColorFrameReader* _reader;
     PoolByteArray _data;
     Ref<Image> _image;
+
+    KinectSensorWrap _kinect_sensor;
+    std::unique_ptr<ColorFrameSourceWrap> _color_frame_source;
 
 public:
     static void _register_methods();

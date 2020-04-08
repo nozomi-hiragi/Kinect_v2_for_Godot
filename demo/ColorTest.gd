@@ -2,7 +2,6 @@ extends Sprite
 
 var color_source
 var image_texture = ImageTexture.new()
-var image = Image.new()
 
 func _ready():
 	color_source = load("res://bin/ColorSource.gdns").new()

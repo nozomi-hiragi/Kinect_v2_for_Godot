@@ -4,6 +4,9 @@
 #include <Godot.hpp>
 #include <ImageTexture.hpp>
 #include <Kinect.h>
+#include "KinectSensorWrap.h"
+#include "BodyFrameSourceWrap.h"
+#include "CoordinateMapperWrap.h"
 
 namespace godot {
 
@@ -11,13 +14,14 @@ class BodySource : public Reference {
     GODOT_CLASS(BodySource, Reference)
 
 private:
-    IKinectSensor* _sensor;
-    IBodyFrameReader* _reader;
-    ICoordinateMapper* _mapper;
     IBody* _bodies[BODY_COUNT];
     BOOLEAN _is_tracked[BODY_COUNT];
     Joint _joints[BODY_COUNT][JointType_Count];
     JointOrientation _joint_orientations[BODY_COUNT][JointType_Count];
+
+    KinectSensorWrap _kinect_sensor;
+    std::unique_ptr<BodyFrameSourceWrap> _body_frame_source;
+    std::unique_ptr<CoordinatorMapperWrap> _coordinator_mapper;
 
 public:
     static void _register_methods();
@@ -66,7 +70,7 @@ public:
             return Vector2();
         }
         ColorSpacePoint pos;
-        _mapper->MapCameraPointToColorSpace(_joints[body_index][joint_index].Position, &pos);
+        _coordinator_mapper->kari()->MapCameraPointToColorSpace(_joints[body_index][joint_index].Position, &pos);
         return Vector2(pos.X, pos.Y);
     }
 
@@ -78,7 +82,7 @@ public:
             return Vector2();
         }
         DepthSpacePoint pos;
-        _mapper->MapCameraPointToDepthSpace(_joints[body_index][joint_index].Position, &pos);
+        _coordinator_mapper->kari()->MapCameraPointToDepthSpace(_joints[body_index][joint_index].Position, &pos);
         return Vector2(pos.X, pos.Y);
     }
 

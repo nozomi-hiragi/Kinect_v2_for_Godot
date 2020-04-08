@@ -15,50 +15,17 @@ ColorSource::ColorSource() {
 }
 
 ColorSource::~ColorSource() {
-    if (_reader) {
-        _reader->Release();
-        _reader = nullptr;
-    }
-
-    if (_sensor) {
-        BOOLEAN is_open = false;
-        _sensor->get_IsOpen(&is_open);
-        if (is_open) {
-            _sensor->Close();
-        }
-        _sensor->Release();
-        _sensor = nullptr;
-    }
+    _color_frame_source->release();
+    _kinect_sensor.release();
 }
 
 void ColorSource::_init() {
-    auto ret = GetDefaultKinectSensor(&_sensor);
-    if (ret != S_OK) {
-        return;
-    }
+    _kinect_sensor.init();
 
-    BOOLEAN is_open = false;
-    _sensor->get_IsOpen(&is_open);
-    if (!is_open) {
-        auto ret = _sensor->Open();
-    }
+    _color_frame_source = _kinect_sensor.create<ColorFrameSourceWrap>();
 
-    IColorFrameSource* color_frame_source = nullptr;
-    ret = _sensor->get_ColorFrameSource(&color_frame_source);
-    ret = color_frame_source->OpenReader(&_reader);
-
-    IFrameDescription* frame_desc;
-    ret = color_frame_source->CreateFrameDescription(ColorImageFormat_Rgba, &frame_desc);
-
-    unsigned int bpp = 0;
-    ret = frame_desc->get_BytesPerPixel(&bpp);
-    unsigned int lip = 0;
-    ret = frame_desc->get_LengthInPixels(&lip);
-
-    _data.resize(bpp * lip);
-
-    frame_desc->Release();
-    color_frame_source->Release();
+    auto& desc = _color_frame_source->getFrameDescription();
+    _data.resize(desc._bytes_per_pixel * desc._length_in_pixels);
 
     if (_image.is_null()) {
         _image.instance();
@@ -70,28 +37,10 @@ void ColorSource::_process(float delta) {
 }
 
 bool ColorSource::update() {
-    if (_reader == nullptr) {
-        return false;
-    }
+    auto ret = _color_frame_source->update([&](IColorFrame* color_frame){
+        color_frame->CopyConvertedFrameDataToArray(_data.size(), _data.write().ptr(), ColorImageFormat_Rgba);
+        _image->create_from_data(1920, 1080, false, Image::FORMAT_RGBA8, _data);
+    });
 
-    IColorFrame* frame = nullptr;
-    auto ret = _reader->AcquireLatestFrame(&frame);
-    if (FAILED(ret)) {
-        if (frame != nullptr) {
-            frame->Release();
-            frame = nullptr;
-        }
-        return false;
-    }
-
-    frame->CopyConvertedFrameDataToArray(_data.size(), _data.write().ptr(), ColorImageFormat_Rgba);
-
-    _image->create_from_data(1920, 1080, false, Image::FORMAT_RGBA8, _data);
-
-    if (frame != nullptr) {
-        frame->Release();
-        frame = nullptr;
-    }
-
-    return true;
+    return ret;
 }

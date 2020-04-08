@@ -15,14 +15,24 @@ void KinectV2::_register_methods() {
     register_method("get_color_image", &KinectV2::get_color_image);
     register_method("get_depth_image", &KinectV2::get_depth_image);
     register_method("get_depth_space_index_image", &KinectV2::get_depth_space_index_image);
+    register_method("get_body_index_image", &KinectV2::get_body_index_image);
+    register_method("is_tracked", &KinectV2::is_tracked);
+    register_method("get_tracking_state", &KinectV2::get_tracking_state);
+    register_method("get_joint_camera_position", &KinectV2::get_joint_camera_position);
+    register_method("get_joint_color_position", &KinectV2::get_joint_color_position);
+    register_method("get_joint_depth_position", &KinectV2::get_joint_depth_position);
+    register_method("get_joint_orientation", &KinectV2::get_joint_orientation);
 }
 
 KinectV2::KinectV2() {
     kari = true;
+    for (auto& body : _bodies) body = nullptr;
 }
 
 KinectV2::~KinectV2() {
     _coordinate_mapper->release();
+    _body_frame_source->release();
+    _body_index_frame_source->release();
     _depth_frame_source->release();
     _color_frame_source->release();
     _kinect_sensor.release();
@@ -32,6 +42,8 @@ void KinectV2::_init() {
     _kinect_sensor.init();
     _color_frame_source = _kinect_sensor.create<ColorFrameSourceWrap>();
     _depth_frame_source = _kinect_sensor.create<DepthFrameSourceWrap>();
+    _body_index_frame_source = _kinect_sensor.create<BodyIndexFrameSourceWrap>();
+    _body_frame_source = _kinect_sensor.create<BodyFrameSourceWrap>();
     _coordinate_mapper = _kinect_sensor.create<CoordinateMapperWrap>();
 
     auto& color_desc = _color_frame_source->getFrameDescription();
@@ -55,6 +67,12 @@ void KinectV2::_init() {
         _depth_space_index_image.instance();
         _depth_space_index_image->create_from_data(COLOR_WIDTH, COLOR_HEIGHT, false, Image::FORMAT_RG8, _depth_space_points);
     }
+
+    _body_index_data.resize(depth_desc._length_in_pixels);
+    if (_body_index_image.is_null()) {
+        _body_index_image.instance();
+        _body_index_image->create_from_data(DEPTH_WIDTH, DEPTH_HEIGHT, false, Image::FORMAT_L8, _body_index_data);
+    }
 }
 
 void KinectV2::_process(float delta) {
@@ -68,6 +86,31 @@ void KinectV2::update() {
 
     auto is_update_depth = _depth_frame_source->update([&](IDepthFrame* frame) {
         frame->CopyFrameDataToArray(_depth_data_buffer.size(), _depth_data_buffer.data());
+    });
+
+    auto is_update_body_index = _body_index_frame_source->update([&](IBodyIndexFrame* frame) {
+        frame->CopyFrameDataToArray(_body_index_data.size(), _body_index_data.write().ptr());
+       _body_index_image->create_from_data(DEPTH_WIDTH, DEPTH_HEIGHT, false, Image::FORMAT_L8, _body_index_data);
+    });
+
+    auto is_update_body = _body_frame_source->update([&](IBodyFrame* frame) {
+        for (auto& body : _bodies) {
+            if (body == nullptr) {
+                continue;
+            }
+            body->Release();
+            body = nullptr;
+        }
+
+        frame->GetAndRefreshBodyData(BODY_COUNT, _bodies);
+        
+        concurrency::parallel_for(0, BODY_COUNT, [&](int i) {
+            _bodies[i]->get_IsTracked(&_is_tracked[i]);
+            if (_is_tracked[i]) {
+                _bodies[i]->GetJoints(JointType_Count, _joints[i]);
+                _bodies[i]->GetJointOrientations(JointType_Count, _joint_orientations[i]);
+            }
+        });
     });
 
     if (is_update_depth) {

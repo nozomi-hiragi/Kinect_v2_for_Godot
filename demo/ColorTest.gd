@@ -17,3 +17,10 @@ func _process(delta):
 		return
 
 	image_texture.create_from_image(color_image)
+	
+	timer += delta
+	if timer > TIMER_LIMIT: # Prints every 2 seconds
+		timer = 0.0
+		print("fps: " + str(Engine.get_frames_per_second()))
+const TIMER_LIMIT = 1
+var timer = 0.0

@@ -7,8 +7,9 @@ void BodyIndexSource::_register_methods() {
     register_method("update", &BodyIndexSource::update);
     register_method("get_buffer_width", &BodyIndexSource::get_buffer_width);
     register_method("get_buffer_height", &BodyIndexSource::get_buffer_height);
+    register_method("get_image", &BodyIndexSource::get_image);
     register_method("get_data", &BodyIndexSource::get_data);
-} 
+}
 
 BodyIndexSource::BodyIndexSource() {
 }
@@ -48,8 +49,6 @@ void BodyIndexSource::_init() {
 
     IFrameDescription* frame_desc;
     ret = body_index_frame_source->get_FrameDescription(&frame_desc);
-    ret = frame_desc->get_Width(&_buffer_width);
-    ret = frame_desc->get_Height(&_buffer_height);
 
     unsigned int bpp = 0;
     ret = frame_desc->get_BytesPerPixel(&bpp);
@@ -60,6 +59,10 @@ void BodyIndexSource::_init() {
 
     frame_desc->Release();
     body_index_frame_source->Release();
+
+    if (_image.is_null()) {
+        _image.instance();
+    }
 }
 
 void BodyIndexSource::_process(float delta) {
@@ -82,6 +85,8 @@ bool BodyIndexSource::update() {
     }
 
     frame->CopyFrameDataToArray(_data.size(), _data.write().ptr());
+
+    _image->create_from_data(get_buffer_width(), get_buffer_height(), false, Image::FORMAT_L8, _data);
 
     if (frame != nullptr) {
         frame->Release();

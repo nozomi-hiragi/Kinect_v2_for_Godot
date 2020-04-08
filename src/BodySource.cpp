@@ -1,4 +1,5 @@
 #include "BodySource.h"
+#include <ppl.h>
 
 using namespace godot;
 
@@ -12,7 +13,7 @@ void BodySource::_register_methods() {
     register_method("get_joint_color_position", &BodySource::get_joint_color_position);
     register_method("get_joint_depth_position", &BodySource::get_joint_depth_position);
     register_method("get_joint_orientation", &BodySource::get_joint_orientation);
-} 
+}
 
 BodySource::BodySource() {
     for (auto& body : _bodies) body = nullptr;
@@ -95,14 +96,13 @@ bool BodySource::update() {
         frame = nullptr;
     }
 
-    for (int i = 0; i < BODY_COUNT; i++) {
+    concurrency::parallel_for(0, BODY_COUNT, [&](int i) {
         _bodies[i]->get_IsTracked(&_is_tracked[i]);
-        if (!_is_tracked[i]) {
-            continue;
+        if (_is_tracked[i]) {
+            _bodies[i]->GetJoints(JointType_Count, _joints[i]);
+            _bodies[i]->GetJointOrientations(JointType_Count, _joint_orientations[i]);
         }
-        _bodies[i]->GetJoints(JointType_Count, _joints[i]);
-        _bodies[i]->GetJointOrientations(JointType_Count, _joint_orientations[i]);
-    }
+    });
 
     return true;
 }

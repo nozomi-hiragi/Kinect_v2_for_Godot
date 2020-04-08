@@ -14,9 +14,7 @@ private:
     IKinectSensor* _sensor;
     IBodyIndexFrameReader* _reader;
     PoolByteArray _data;
-
-    int _buffer_width;
-    int _buffer_height;
+    Ref<Image> _image;
 
 public:
     static void _register_methods();
@@ -28,8 +26,9 @@ public:
     void _process(float delta);
 
     bool update();
-    int get_buffer_width() { return _buffer_width; }
-    int get_buffer_height() { return _buffer_height; }
+    inline int get_buffer_width() { return 512; }
+    inline int get_buffer_height() { return 424; }
+    Ref<Image> get_image() { return _image; }
     PoolByteArray get_data() { return _data; }
 };
 

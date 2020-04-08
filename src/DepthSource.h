@@ -16,9 +16,14 @@ private:
     IDepthFrameReader* _reader;
     std::vector<UINT16> _buffer;
     PoolIntArray _data;
+    PoolByteArray _normalize_data;
+    Ref<Image> _image;
 
-    int _buffer_width;
-    int _buffer_height;
+    ICoordinateMapper* _mapper;
+    PoolByteArray _color_space_points;
+    Ref<Image> _color_space_index_image;
+
+    bool _ticktack;
 
 public:
     static void _register_methods();
@@ -30,9 +35,11 @@ public:
     void _process(float delta);
 
     bool update();
-    int get_buffer_width() { return _buffer_width; }
-    int get_buffer_height() { return _buffer_height; }
+    inline int get_buffer_width() { return 512; }
+    inline int get_buffer_height() { return 424; }
+    Ref<Image> get_image() { return _image; }
     PoolIntArray get_data() { return _data; }
+    Ref<Image> get_color_stape_index_image() { return _color_space_index_image; }
 };
 
 }

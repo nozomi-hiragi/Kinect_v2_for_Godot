@@ -31,7 +31,7 @@ func _process(delta):
 		center_line.set_point_position(2, body_source.get_joint_depth_position(i, 20))
 		center_line.set_point_position(3, body_source.get_joint_depth_position(i, 2))
 		center_line.set_point_position(4, body_source.get_joint_depth_position(i, 3))
-	
+		
 		arm_line.set_point_position(0, body_source.get_joint_depth_position(i, 21))
 		arm_line.set_point_position(1, body_source.get_joint_depth_position(i, 7))
 		arm_line.set_point_position(2, body_source.get_joint_depth_position(i, 6))
@@ -43,7 +43,7 @@ func _process(delta):
 		arm_line.set_point_position(8, body_source.get_joint_depth_position(i, 10))
 		arm_line.set_point_position(9, body_source.get_joint_depth_position(i, 11))
 		arm_line.set_point_position(10, body_source.get_joint_depth_position(i, 23))
-	
+		
 		leg_line.set_point_position(0, body_source.get_joint_depth_position(i, 15))
 		leg_line.set_point_position(1, body_source.get_joint_depth_position(i, 14))
 		leg_line.set_point_position(2, body_source.get_joint_depth_position(i, 13))
@@ -53,6 +53,3 @@ func _process(delta):
 		leg_line.set_point_position(6, body_source.get_joint_depth_position(i, 17))
 		leg_line.set_point_position(7, body_source.get_joint_depth_position(i, 18))
 		leg_line.set_point_position(8, body_source.get_joint_depth_position(i, 19))
-		return
-
-

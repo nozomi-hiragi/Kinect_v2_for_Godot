@@ -3,6 +3,6 @@
 [ext_resource path="res://bin/kinect.gdnlib" type="GDNativeLibrary" id=1]
 
 [resource]
-resource_name = "Test"
-class_name = "Test"
+resource_name = "KinectV2"
+class_name = "KinectV2"
 library = ExtResource( 1 )

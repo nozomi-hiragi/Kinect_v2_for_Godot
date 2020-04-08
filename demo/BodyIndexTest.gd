@@ -11,4 +11,8 @@ func _process(delta):
 	if !body_index_source.update():
 		return
 	
-	image_texture.create_from_image(body_index_source.get_image())
+	var image = body_index_source.get_image()
+	if image == null:
+		return
+	
+	image_texture.create_from_image(image)

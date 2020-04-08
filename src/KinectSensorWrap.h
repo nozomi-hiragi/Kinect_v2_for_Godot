@@ -2,8 +2,6 @@
 #define _KINECT_SENSOR_WRAP_H_
 
 #include <Kinect.h>
-#include "ColorFrameSourceWrap.h"
-#include "DepthFrameSourceWrap.h"
 
 class KinectSensorWrap {
 public:
@@ -37,8 +35,6 @@ public:
         instance->init(_kinect_sensor);
         return std::move(instance);
     }
-
-    IKinectSensor* kari(){return _kinect_sensor;}
 
 private:
     IKinectSensor* _kinect_sensor;

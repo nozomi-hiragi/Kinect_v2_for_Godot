@@ -1,12 +1,12 @@
-#ifndef _COORDINATOR_MAPPER_WRAP_H_
-#define _COORDINATOR_MAPPER_WRAP_H_
+#ifndef _COORDINATE_MAPPER_WRAP_H_
+#define _COORDINATE_MAPPER_WRAP_H_
 
 #include <Kinect.h>
 
-class CoordinatorMapperWrap {
+class CoordinateMapperWrap {
 public:
-    CoordinatorMapperWrap() : _coordinate_mapper(nullptr) {}
-    ~CoordinatorMapperWrap() {}
+    CoordinateMapperWrap() : _coordinate_mapper(nullptr) {}
+    ~CoordinateMapperWrap() {}
 
     void init(IKinectSensor* sensor) {
         release();

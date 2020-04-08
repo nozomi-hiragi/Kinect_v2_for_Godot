@@ -21,7 +21,7 @@ private:
 
     KinectSensorWrap _kinect_sensor;
     std::unique_ptr<BodyFrameSourceWrap> _body_frame_source;
-    std::unique_ptr<CoordinatorMapperWrap> _coordinator_mapper;
+    std::unique_ptr<CoordinateMapperWrap> _coordinate_mapper;
 
 public:
     static void _register_methods();
@@ -70,7 +70,7 @@ public:
             return Vector2();
         }
         ColorSpacePoint pos;
-        _coordinator_mapper->kari()->MapCameraPointToColorSpace(_joints[body_index][joint_index].Position, &pos);
+        _coordinate_mapper->kari()->MapCameraPointToColorSpace(_joints[body_index][joint_index].Position, &pos);
         return Vector2(pos.X, pos.Y);
     }
 
@@ -82,7 +82,7 @@ public:
             return Vector2();
         }
         DepthSpacePoint pos;
-        _coordinator_mapper->kari()->MapCameraPointToDepthSpace(_joints[body_index][joint_index].Position, &pos);
+        _coordinate_mapper->kari()->MapCameraPointToDepthSpace(_joints[body_index][joint_index].Position, &pos);
         return Vector2(pos.X, pos.Y);
     }
 

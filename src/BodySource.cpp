@@ -20,7 +20,7 @@ BodySource::BodySource() {
 }
 
 BodySource::~BodySource() {
-    _coordinator_mapper->release();
+    _coordinate_mapper->release();
     _body_frame_source->release();
     _kinect_sensor.release();
 }
@@ -28,7 +28,7 @@ BodySource::~BodySource() {
 void BodySource::_init() {
     _kinect_sensor.init();
     _body_frame_source = _kinect_sensor.create<BodyFrameSourceWrap>();
-    _coordinator_mapper = _kinect_sensor.create<CoordinatorMapperWrap>();
+    _coordinate_mapper = _kinect_sensor.create<CoordinateMapperWrap>();
 }
 
 void BodySource::_process(float delta) {

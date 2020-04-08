@@ -30,6 +30,7 @@ void BodyIndexSource::_init() {
     if (_image.is_null()) {
         _image.instance();
     }
+    _image->create_from_data(get_buffer_width(), get_buffer_height(), false, Image::FORMAT_L8, _data);
 }
 
 void BodyIndexSource::_process(float delta) {

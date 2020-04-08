@@ -1,5 +1,4 @@
-#include "ColorSource.h"
-#include "DepthSource.h"
+#include "KinectV2.h"
 #include "BodyIndexSource.h"
 #include "BodySource.h"
 
@@ -14,8 +13,7 @@ extern "C" void GDN_EXPORT kinect_gdnative_terminate(godot_gdnative_terminate_op
 extern "C" void GDN_EXPORT kinect_nativescript_init(void *handle) {
     godot::Godot::nativescript_init(handle);
 
-    godot::register_class<godot::ColorSource>();
-    godot::register_class<godot::DepthSource>();
+    godot::register_class<KinectV2>();
     godot::register_class<godot::BodyIndexSource>();
     godot::register_class<godot::BodySource>();
 }

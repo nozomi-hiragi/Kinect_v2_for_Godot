@@ -26,6 +26,7 @@ public:
     godot::Ref<godot::Image> get_color_image() const { return _color_image; }
     godot::Ref<godot::Image> get_depth_image() const { return _depth_image; }
     godot::Ref<godot::Image> get_depth_space_index_image() const { return _depth_space_index_image; }
+    godot::Ref<godot::Image> get_color_space_index_image() const { return _color_space_index_image; }
     godot::Ref<godot::Image> get_body_index_image() const { return _body_index_image; }
 
     bool is_tracked(int index) {
@@ -63,8 +64,7 @@ public:
         if (unsigned short(joint_index) >= JointType_Count) {
             return godot::Vector2();
         }
-        ColorSpacePoint pos;
-        _coordinate_mapper->kari()->MapCameraPointToColorSpace(_joints[body_index][joint_index].Position, &pos);
+        auto pos = _coordinate_mapper->cameraToColor(_joints[body_index][joint_index].Position);
         return godot::Vector2(pos.X, pos.Y);
     }
 
@@ -75,8 +75,7 @@ public:
         if (unsigned short(joint_index) >= JointType_Count) {
             return godot::Vector2();
         }
-        DepthSpacePoint pos;
-        _coordinate_mapper->kari()->MapCameraPointToDepthSpace(_joints[body_index][joint_index].Position, &pos);
+        auto pos = _coordinate_mapper->cameraToDepth(_joints[body_index][joint_index].Position);
         return godot::Vector2(pos.X, pos.Y);
     }
 
@@ -107,8 +106,13 @@ private:
     godot::PoolByteArray _depth_data;
     godot::Ref<godot::Image> _depth_image;
 
+    std::vector<DepthSpacePoint> _depth_space_point_buffer;
     godot::PoolByteArray _depth_space_points;
     godot::Ref<godot::Image> _depth_space_index_image;
+
+    std::vector<ColorSpacePoint> _color_space_point_buffer;
+    godot::PoolByteArray _color_space_points;
+    godot::Ref<godot::Image> _color_space_index_image;
 
     godot::PoolByteArray _body_index_data;
     godot::Ref<godot::Image> _body_index_image;
@@ -118,7 +122,7 @@ private:
     Joint _joints[BODY_COUNT][JointType_Count];
     JointOrientation _joint_orientations[BODY_COUNT][JointType_Count];
 
-    bool kari;
+    bool ticktack;
 };
 
 #endif

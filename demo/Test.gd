@@ -11,6 +11,9 @@ var depth_texture = ImageTexture.new()
 onready var depth_space_test = $DepthSpaceTest
 var depth_space_texture = ImageTexture.new()
 
+onready var color_space_test = $ColorSpaceTest
+var color_space_texture = ImageTexture.new()
+
 onready var body_index_test = $BodyIndexTest
 var body_index_texture = ImageTexture.new()
 
@@ -25,6 +28,7 @@ func _ready():
 	color_test.texture = color_texture
 	depth_test.texture = depth_texture
 	depth_space_test.texture = depth_space_texture
+	color_space_test.texture = color_space_texture
 	body_index_test.texture = body_index_texture
 	
 	var points = PoolVector2Array()
@@ -48,6 +52,7 @@ func _process(delta):
 	color_texture.create_from_image(kinect.get_color_image())
 	depth_texture.create_from_image(kinect.get_depth_image())
 	depth_space_texture.create_from_image(kinect.get_depth_space_index_image())
+	color_space_texture.create_from_image(kinect.get_color_space_index_image())
 	body_index_texture.create_from_image(kinect.get_body_index_image())
 	
 	for i in range(6):

@@ -22,8 +22,13 @@ scale = Vector2( 1.4, 1.4 )
 
 [node name="DepthSpaceTest" type="Sprite" parent="."]
 material = SubResource( 2 )
-position = Vector2( 530, 370 )
+position = Vector2( 300, 370 )
 scale = Vector2( 0.35, 0.35 )
+
+[node name="ColorSpaceTest" type="Sprite" parent="."]
+material = SubResource( 2 )
+position = Vector2( 800, 370 )
+scale = Vector2( 0.7, 0.7 )
 
 [node name="BodyIndexTest" type="Sprite" parent="."]
 position = Vector2( 750, 380 )
